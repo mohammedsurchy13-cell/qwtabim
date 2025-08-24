@@ -2,72 +2,85 @@
 <html lang="ku">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>گەڕانی قوتابیان</title>
+
+  <!-- ✅ Meta tag بۆ گووگڵ verification -->
+  <meta name="google-site-verification" content="8ESzj70whQtL5wC7aDa1qgQvSpnSiEmHY_apSp10wjY" />
+
   <style>
     body {
-      font-family: "Noto Naskh Arabic", Arial, sans-serif;
-      direction: rtl;
-      text-align: right;
-      background: #f7f7f7;
-      padding: 20px;
+      font-family: "Noto Sans Kurdish", Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      direction: rtl; /* بە کوردی ڕاست بۆ چەپ */
     }
-    .search-box {
-      margin-bottom: 20px;
+    header {
+      background: #4caf50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 0 0 20px 20px;
     }
-    input {
-      padding: 10px;
-      width: 300px;
-      font-size: 16px;
+    main {
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-    .result {
+    .student-card {
       background: white;
-      padding: 20px;
-      margin-top: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .student-card h2 {
+      margin: 0;
+      color: #333;
+    }
+    .student-card p {
+      margin: 0.3rem 0;
+      color: #555;
+    }
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 20px 20px 0 0;
+    }
+    .lang-note {
+      font-size: 0.8rem;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-  <h2>گەڕانی قوتابیان</h2>
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="کۆدی قوتابی بنووسە...">
-    <button onclick="searchStudent()">گەڕان</button>
-  </div>
-  <div id="result"></div>
+  <header>
+    گەڕانی قوتابیان
+  </header>
 
-  <script>
-    const data = [
-      { "کود": "123", "ناوی قوتابی": "ئازاد کرم", "کوردی": 97, "بیرکاری": 86, "زیندەوەر": 49 },
-      { "کود": "124", "ناوی قوتابی": "احمد شاکر", "کوردی": 87, "بیرکاری": 45, "زیندەوەر": 90 },
-      { "کود": "125", "ناوی قوتابی": "محمد برندار", "کوردی": 67, "بیرکاری": 98, "زیندەوەر": 89 }
-    ];
+  <main>
+    <div class="student-card">
+      <h2>ناوی قوتابی: محمد سۆرچی</h2>
+      <p>پۆل: 12</p>
+      <p>بابەت: زانیاریاری</p>
+    </div>
 
-    function searchStudent() {
-      const code = document.getElementById("searchInput").value.trim();
-      const student = data.find(s => s["کود"] === code);
-      const resultDiv = document.getElementById("result");
+    <div class="student-card">
+      <h2>ناوی قوتابی: هێمن عەلی</h2>
+      <p>پۆل: 11</p>
+      <p>بابەت: بیرکاری</p>
+    </div>
+  </main>
 
-      if (student) {
-        resultDiv.innerHTML = `
-          <div class="result">
-            <h3>${student["ناوی قوتابی"]}</h3>
-            <p><strong>کود:</strong> ${student["کود"]}</p>
-            <p><strong>کوردی:</strong> ${student["کوردی"]}</p>
-            <p><strong>بیرکاری:</strong> ${student["بیرکاری"]}</p>
-            <p><strong>زیندەوەر:</strong> ${student["زیندەوەر"]}</p>
-            <hr>
-            <p><strong>دروستکەری وێب:</strong> محمد سورچی</p>
-          </div>
-        `;
-      } else {
-        resultDiv.innerHTML = "<p>هیچ قوتابی نەدۆزرایەوە!</p>";
-      }
-    }
-  </script>
+  <footer>
+    &copy; 2025 هەموو مافەکان پارێزراون<br>
+    <span class="lang-note">Arabic & English below (عربي - English)</span>
+  </footer>
 </body>
 </html>
