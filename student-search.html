@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Search</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6">
+    
+    <!-- Title -->
+    <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">🏫 ئەنجامەکانی خوێندکاران</h1>
+    
+    <!-- Search Box -->
+    <div class="flex items-center gap-2 mb-6">
+      <input id="searchBox" type="text" placeholder="کود یان ناو بنووسە..." 
+             class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="searchStudent()" 
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">گەڕان</button>
+    </div>
+    
+    <!-- Results -->
+    <div id="results" class="grid gap-4"></div>
+    
+    <!-- Footer -->
+    <footer class="text-center mt-8 text-gray-500 text-sm">
+      © 2025 Student Search | هەموو مافەکانی پارێزراون
+    </footer>
+  </div>
+
+  <script>
+    // داتای خوێندکاران
+    const students = [
+      { code: "12345", name: "عومەر", zindawar: 8, kurdi: 9, birkari: 7, majmu3: 25, bar: 16 },
+      { code: "67890", name: "هەڵۆ", zindawar: 9, kurdi: 10, birkari: 8, majmu3: 27, bar: 15 },
+      { code: "24680", name: "سارا", zindawar: 7, kurdi: 8, birkari: 6, majmu3: 21, bar: 14 },
+      { code: "13579", name: "هیوا", zindawar: 10, kurdi: 9, birkari: 9, majmu3: 28, bar: 17 }
+    ];
+
+    // فەرەکشن بۆ پیشاندانی کاردەکان
+    function displayResults(filtered) {
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      if (filtered.length === 0) {
+        resultsDiv.innerHTML = `<p class="text-center text-red-500">🚫 هیچ خوێندکارێک نەدۆزرایەوە</p>`;
+        return;
+      }
+
+      filtered.forEach(s => {
+        const card = `
+          <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl shadow-md p-4">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-center">
+              <div><p class="text-sm opacity-80">کود</p><p class="text-lg font-semibold">${s.code}</p></div>
+              <div><p class="text-sm opacity-80">ناو</p><p class="text-lg font-semibold">${s.name}</p></div>
+              <div><p class="text-sm opacity-80">زیندەوەر</p><p class="text-lg font-semibold">${s.zindawar}</p></div>
+              <div><p class="text-sm opacity-80">کوردی</p><p class="text-lg font-semibold">${s.kurdi}</p></div>
+              <div><p class="text-sm opacity-80">بیرکاری</p><p class="text-lg font-semibold">${s.birkari}</p></div>
+              <div><p class="text-sm opacity-80">مجموعی</p><p class="text-lg font-semibold">${s.majmu3}</p></div>
+              <div><p class="text-sm opacity-80">بار</p><p class="text-lg font-semibold">${s.bar}</p></div>
+            </div>
+          </div>
+        `;
+        resultsDiv.innerHTML += card;
+      });
+    }
+
+    // گەڕان
+    function searchStudent() {
+      const query = document.getElementById("searchBox").value.trim();
+      const filtered = students.filter(s => 
+        s.code.includes(query) || s.name.includes(query)
+      );
+      displayResults(filtered);
+    }
+
+    // بۆ ئەوەی لە سەرەتاوە هەموو خوێندکاران پیشان بدات
+    displayResults(students);
+  </script>
+</body>
+</html>
