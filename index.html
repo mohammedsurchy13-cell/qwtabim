@@ -1,86 +1,128 @@
 <!DOCTYPE html>
 <html lang="ku">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>گەڕانی قوتابیان</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qwtabim</title>
 
-  <!-- ✅ Meta tag بۆ گووگڵ verification -->
-  <meta name="google-site-verification" content="8ESzj70whQtL5wC7aDa1qgQvSpnSiEmHY_apSp10wjY" />
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PXXKNPKR');</script>
+  <!-- End Google Tag Manager -->
 
   <style>
     body {
       font-family: "Noto Sans Kurdish", Arial, sans-serif;
-      background: #f5f5f5;
+      background: #f9f9f9;
       margin: 0;
       padding: 0;
-      direction: rtl; /* بە کوردی ڕاست بۆ چەپ */
+      text-align: center;
     }
     header {
-      background: #4caf50;
+      background: #2c3e50;
       color: white;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      border-radius: 0 0 20px 20px;
+      padding: 20px;
+      font-size: 22px;
     }
-    main {
-      padding: 2rem;
+    .search-box {
+      margin: 20px auto;
+      max-width: 400px;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #3498db;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
       max-width: 900px;
-      margin: auto;
-    }
-    .student-card {
       background: white;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .student-card h2 {
-      margin: 0;
-      color: #333;
-    }
-    .student-card p {
-      margin: 0.3rem 0;
-      color: #555;
-    }
-    footer {
-      background: #333;
-      color: white;
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
       text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-      border-radius: 20px 20px 0 0;
     }
-    .lang-note {
-      font-size: 0.8rem;
-      color: #ccc;
+    th {
+      background: #3498db;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <header>
-    گەڕانی قوتابیان
-  </header>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PXXKNPKR"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
-  <main>
-    <div class="student-card">
-      <h2>ناوی قوتابی: محمد سۆرچی</h2>
-      <p>پۆل: 12</p>
-      <p>بابەت: زانیاریاری</p>
-    </div>
+  <header>Qwtabim - سیستەمی گەڕانی قوتابی</header>
 
-    <div class="student-card">
-      <h2>ناوی قوتابی: هێمن عەلی</h2>
-      <p>پۆل: 11</p>
-      <p>بابەت: بیرکاری</p>
-    </div>
-  </main>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="ناوی قوتابی بنووسە..." />
+    <button onclick="searchStudent()">گەڕان</button>
+  </div>
 
-  <footer>
-    &copy; 2025 هەموو مافەکان پارێزراون<br>
-    <span class="lang-note">Arabic & English below (عربي - English)</span>
-  </footer>
+  <table id="resultsTable">
+    <thead>
+      <tr>
+        <th>ناو</th>
+        <th>پۆل</th>
+        <th>ژ. قوتابی</th>
+        <th>دروستکەر</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const students = [
+      { name: "علی حسن", grade: "12", id: "101", creator: "محمد سورچی" },
+      { name: "سارا عبدالله", grade: "11", id: "102", creator: "محمد سورچی" },
+      { name: "دیار حەمید", grade: "10", id: "103", creator: "محمد سورچی" },
+      { name: "هەڵبەست کریم", grade: "12", id: "104", creator: "محمد سورچی" }
+    ];
+
+    function searchStudent() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const tableBody = document.querySelector("#resultsTable tbody");
+      tableBody.innerHTML = "";
+
+      const filtered = students.filter(s =>
+        s.name.toLowerCase().includes(input) ||
+        s.grade.includes(input) ||
+        s.id.includes(input)
+      );
+
+      filtered.forEach(s => {
+        const row = `<tr>
+          <td>${s.name}</td>
+          <td>${s.grade}</td>
+          <td>${s.id}</td>
+          <td>${s.creator}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      });
+    }
+  </script>
 </body>
 </html>
