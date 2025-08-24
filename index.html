@@ -3,80 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Search</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>قوتابی - گەڕانی قوتابی</title>
+  <meta name="description" content="قوتابی - ئامرازی خێرا بۆ گەڕانی قوتابیەکان">
+  <meta name="keywords" content="قوتابی, گەڕان, قوتابی, قوتابی کوردستان">
+  <meta name="author" content="Qwtabi Team">
+  <meta name="robots" content="index, follow">
+  <style>
+    body {
+      font-family: "Noto Sans Arabic", Arial, sans-serif;
+      margin: 20px;
+      background: #f5f7fa;
+      direction: rtl; /* کوردی و عەرەبی RTL */
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 300px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .student-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px auto;
+      width: 350px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    #creator {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #e3f2fd;
+      border-radius: 12px;
+      width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+    }
+    .lang-switch {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .lang-switch button {
+      margin: 5px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: #1976d2;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6">
-    
-    <!-- Title -->
-    <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">🏫 ئەنجامەکانی خوێندکاران</h1>
-    
-    <!-- Search Box -->
-    <div class="flex items-center gap-2 mb-6">
-      <input id="searchBox" type="text" placeholder="کود یان ناو بنووسە..." 
-             class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <button onclick="searchStudent()" 
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">گەڕان</button>
-    </div>
-    
-    <!-- Results -->
-    <div id="results" class="grid gap-4"></div>
-    
-    <!-- Footer -->
-    <footer class="text-center mt-8 text-gray-500 text-sm">
-      © 2025 Student Search | هەموو مافەکانی پارێزراون
-    </footer>
+<body>
+  <h1 id="title">قوتابی - گەڕانی قوتابی</h1>
+
+  <!-- زمانەکان -->
+  <div class="lang-switch">
+    <button onclick="setLang('ku')">کوردی</button>
+    <button onclick="setLang('ar')">عەرەبی</button>
+    <button onclick="setLang('en')">English</button>
+  </div>
+
+  <input type="text" id="searchBox" placeholder="ناوی قوتابی بنووسە...">
+
+  <div id="results"></div>
+
+  <!-- دروستکەری وێب -->
+  <div id="creator">
+    <p><strong id="creatorTitle">دروستکەری وێب:</strong> Mohammed Surchy</p>
+    <p id="creatorContact">پەیوەندی: mohammed@example.com</p>
   </div>
 
   <script>
-    // داتای خوێندکاران
+    const translations = {
+      ku: {
+        title: "قوتابی - گەڕانی قوتابی",
+        placeholder: "ناوی قوتابی بنووسە...",
+        grade: "قۆناغ",
+        school: "قوتابخانە",
+        creator: "دروستکەری وێب:",
+        contact: "پەیوەندی:"
+      },
+      ar: {
+        title: "الطالب - بحث عن الطالب",
+        placeholder: "اكتب اسم الطالب...",
+        grade: "الصف",
+        school: "المدرسة",
+        creator: "منشئ الموقع:",
+        contact: "تواصل:"
+      },
+      en: {
+        title: "Qwtabi - Student Search",
+        placeholder: "Search student by name...",
+        grade: "Grade",
+        school: "School",
+        creator: "Website Creator:",
+        contact: "Contact:"
+      }
+    };
+
     const students = [
-      { code: "12345", name: "عومەر", zindawar: 8, kurdi: 9, birkari: 7, majmu3: 25, bar: 16 },
-      { code: "67890", name: "هەڵۆ", zindawar: 9, kurdi: 10, birkari: 8, majmu3: 27, bar: 15 },
-      { code: "24680", name: "سارا", zindawar: 7, kurdi: 8, birkari: 6, majmu3: 21, bar: 14 },
-      { code: "13579", name: "هیوا", zindawar: 10, kurdi: 9, birkari: 9, majmu3: 28, bar: 17 }
+      { name: "Ali Ahmed", grade: "12", school: "Erbil High School" },
+      { name: "Sara Omar", grade: "11", school: "Hawler Preparatory" },
+      { name: "Dilan Mohammed", grade: "12", school: "Soran Secondary" }
     ];
 
-    // فەرەکشن بۆ پیشاندانی کاردەکان
-    function displayResults(filtered) {
-      const resultsDiv = document.getElementById("results");
+    const searchBox = document.getElementById("searchBox");
+    const resultsDiv = document.getElementById("results");
+    const creatorDiv = document.getElementById("creator");
+
+    function setLang(lang) {
+      document.getElementById("title").innerText = translations[lang].title;
+      searchBox.placeholder = translations[lang].placeholder;
+      document.getElementById("creatorTitle").innerText = translations[lang].creator;
+      document.getElementById("creatorContact").innerText = translations[lang].contact + " mohammed@example.com";
+      searchBox.dataset.lang = lang;
+    }
+
+    searchBox.addEventListener("keyup", function () {
+      const query = searchBox.value.toLowerCase();
       resultsDiv.innerHTML = "";
+      let found = false;
+      const lang = searchBox.dataset.lang || "ku";
 
-      if (filtered.length === 0) {
-        resultsDiv.innerHTML = `<p class="text-center text-red-500">🚫 هیچ خوێندکارێک نەدۆزرایەوە</p>`;
-        return;
-      }
-
-      filtered.forEach(s => {
-        const card = `
-          <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl shadow-md p-4">
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-center">
-              <div><p class="text-sm opacity-80">کود</p><p class="text-lg font-semibold">${s.code}</p></div>
-              <div><p class="text-sm opacity-80">ناو</p><p class="text-lg font-semibold">${s.name}</p></div>
-              <div><p class="text-sm opacity-80">زیندەوەر</p><p class="text-lg font-semibold">${s.zindawar}</p></div>
-              <div><p class="text-sm opacity-80">کوردی</p><p class="text-lg font-semibold">${s.kurdi}</p></div>
-              <div><p class="text-sm opacity-80">بیرکاری</p><p class="text-lg font-semibold">${s.birkari}</p></div>
-              <div><p class="text-sm opacity-80">مجموعی</p><p class="text-lg font-semibold">${s.majmu3}</p></div>
-              <div><p class="text-sm opacity-80">بار</p><p class="text-lg font-semibold">${s.bar}</p></div>
-            </div>
-          </div>
-        `;
-        resultsDiv.innerHTML += card;
+      students.forEach(student => {
+        if (student.name.toLowerCase().includes(query) && query !== "") {
+          const card = document.createElement("div");
+          card.className = "student-card";
+          card.innerHTML = `<h3>${student.name}</h3>
+                            <p>${translations[lang].grade}: ${student.grade}</p>
+                            <p>${translations[lang].school}: ${student.school}</p>`;
+          resultsDiv.appendChild(card);
+          found = true;
+        }
       });
-    }
 
-    // گەڕان
-    function searchStudent() {
-      const query = document.getElementById("searchBox").value.trim();
-      const filtered = students.filter(s => 
-        s.code.includes(query) || s.name.includes(query)
-      );
-      displayResults(filtered);
-    }
+      if (found) {
+        creatorDiv.style.display = "block";
+      } else {
+        creatorDiv.style.display = "none";
+      }
+    });
 
-    // بۆ ئەوەی لە سەرەتاوە هەموو خوێندکاران پیشان بدات
-    displayResults(students);
+    // زمان سەرەکی
+    setLang("ku");
   </script>
 </body>
 </html>
