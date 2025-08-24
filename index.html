@@ -2,160 +2,72 @@
 <html lang="ku">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قوتابی - گەڕانی قوتابی</title>
-  <meta name="description" content="قوتابی - ئامرازی خێرا بۆ گەڕانی قوتابیەکان">
-  <meta name="keywords" content="قوتابی, گەڕان, قوتابی, قوتابی کوردستان">
-  <meta name="author" content="Qwtabi Team">
-  <meta name="robots" content="index, follow">
+  <title>گەڕانی قوتابیان</title>
   <style>
     body {
-      font-family: "Noto Sans Arabic", Arial, sans-serif;
-      margin: 20px;
-      background: #f5f7fa;
-      direction: rtl; /* کوردی و عەرەبی RTL */
+      font-family: "Noto Naskh Arabic", Arial, sans-serif;
+      direction: rtl;
+      text-align: right;
+      background: #f7f7f7;
+      padding: 20px;
     }
-    h1 {
-      text-align: center;
-      color: #333;
+    .search-box {
+      margin-bottom: 20px;
     }
     input {
-      display: block;
-      margin: 10px auto;
       padding: 10px;
       width: 300px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      font-size: 16px;
     }
-    .student-card {
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    .result {
       background: white;
-      border-radius: 12px;
-      padding: 15px;
-      margin: 15px auto;
-      width: 350px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    #creator {
-      display: none;
-      margin-top: 20px;
-      padding: 15px;
-      background: #e3f2fd;
-      border-radius: 12px;
-      width: 350px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-      font-size: 14px;
-      color: #333;
-    }
-    .lang-switch {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .lang-switch button {
-      margin: 5px;
-      padding: 8px 12px;
+      padding: 20px;
+      margin-top: 10px;
       border-radius: 8px;
-      border: none;
-      background: #1976d2;
-      color: white;
-      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <h1 id="title">قوتابی - گەڕانی قوتابی</h1>
-
-  <!-- زمانەکان -->
-  <div class="lang-switch">
-    <button onclick="setLang('ku')">کوردی</button>
-    <button onclick="setLang('ar')">عەرەبی</button>
-    <button onclick="setLang('en')">English</button>
+  <h2>گەڕانی قوتابیان</h2>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="کۆدی قوتابی بنووسە...">
+    <button onclick="searchStudent()">گەڕان</button>
   </div>
-
-  <input type="text" id="searchBox" placeholder="ناوی قوتابی بنووسە...">
-
-  <div id="results"></div>
-
-  <!-- دروستکەری وێب -->
-  <div id="creator">
-    <p><strong id="creatorTitle">دروستکەری وێب:</strong> Mohammed Surchy</p>
-    <p id="creatorContact">پەیوەندی: mohammed@example.com</p>
-  </div>
+  <div id="result"></div>
 
   <script>
-    const translations = {
-      ku: {
-        title: "قوتابی - گەڕانی قوتابی",
-        placeholder: "ناوی قوتابی بنووسە...",
-        grade: "قۆناغ",
-        school: "قوتابخانە",
-        creator: "دروستکەری وێب:",
-        contact: "پەیوەندی:"
-      },
-      ar: {
-        title: "الطالب - بحث عن الطالب",
-        placeholder: "اكتب اسم الطالب...",
-        grade: "الصف",
-        school: "المدرسة",
-        creator: "منشئ الموقع:",
-        contact: "تواصل:"
-      },
-      en: {
-        title: "Qwtabi - Student Search",
-        placeholder: "Search student by name...",
-        grade: "Grade",
-        school: "School",
-        creator: "Website Creator:",
-        contact: "Contact:"
-      }
-    };
-
-    const students = [
-      { name: "Ali Ahmed", grade: "12", school: "Erbil High School" },
-      { name: "Sara Omar", grade: "11", school: "Hawler Preparatory" },
-      { name: "Dilan Mohammed", grade: "12", school: "Soran Secondary" }
+    const data = [
+      { "کود": "123", "ناوی قوتابی": "ئازاد کرم", "کوردی": 97, "بیرکاری": 86, "زیندەوەر": 49 },
+      { "کود": "124", "ناوی قوتابی": "احمد شاکر", "کوردی": 87, "بیرکاری": 45, "زیندەوەر": 90 },
+      { "کود": "125", "ناوی قوتابی": "محمد برندار", "کوردی": 67, "بیرکاری": 98, "زیندەوەر": 89 }
     ];
 
-    const searchBox = document.getElementById("searchBox");
-    const resultsDiv = document.getElementById("results");
-    const creatorDiv = document.getElementById("creator");
+    function searchStudent() {
+      const code = document.getElementById("searchInput").value.trim();
+      const student = data.find(s => s["کود"] === code);
+      const resultDiv = document.getElementById("result");
 
-    function setLang(lang) {
-      document.getElementById("title").innerText = translations[lang].title;
-      searchBox.placeholder = translations[lang].placeholder;
-      document.getElementById("creatorTitle").innerText = translations[lang].creator;
-      document.getElementById("creatorContact").innerText = translations[lang].contact + " mohammed@example.com";
-      searchBox.dataset.lang = lang;
-    }
-
-    searchBox.addEventListener("keyup", function () {
-      const query = searchBox.value.toLowerCase();
-      resultsDiv.innerHTML = "";
-      let found = false;
-      const lang = searchBox.dataset.lang || "ku";
-
-      students.forEach(student => {
-        if (student.name.toLowerCase().includes(query) && query !== "") {
-          const card = document.createElement("div");
-          card.className = "student-card";
-          card.innerHTML = `<h3>${student.name}</h3>
-                            <p>${translations[lang].grade}: ${student.grade}</p>
-                            <p>${translations[lang].school}: ${student.school}</p>`;
-          resultsDiv.appendChild(card);
-          found = true;
-        }
-      });
-
-      if (found) {
-        creatorDiv.style.display = "block";
+      if (student) {
+        resultDiv.innerHTML = `
+          <div class="result">
+            <h3>${student["ناوی قوتابی"]}</h3>
+            <p><strong>کود:</strong> ${student["کود"]}</p>
+            <p><strong>کوردی:</strong> ${student["کوردی"]}</p>
+            <p><strong>بیرکاری:</strong> ${student["بیرکاری"]}</p>
+            <p><strong>زیندەوەر:</strong> ${student["زیندەوەر"]}</p>
+            <hr>
+            <p><strong>دروستکەری وێب:</strong> محمد سورچی</p>
+          </div>
+        `;
       } else {
-        creatorDiv.style.display = "none";
+        resultDiv.innerHTML = "<p>هیچ قوتابی نەدۆزرایەوە!</p>";
       }
-    });
-
-    // زمان سەرەکی
-    setLang("ku");
+    }
   </script>
 </body>
 </html>
