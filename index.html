@@ -1,128 +1,289 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="ku" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qwtabim</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Qwtabim — کارت و PDF</title>
 
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-PXXKNPKR');</script>
-  <!-- End Google Tag Manager -->
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- SheetJS (xlsx) for reading Excel in browser -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <!-- html2pdf (html -> pdf) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
   <style>
-    body {
-      font-family: "Noto Sans Kurdish", Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    header {
-      background: #2c3e50;
-      color: white;
-      padding: 20px;
-      font-size: 22px;
-    }
-    .search-box {
-      margin: 20px auto;
-      max-width: 400px;
-    }
-    input {
-      width: 80%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      padding: 10px 15px;
-      border: none;
-      background: #3498db;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-left: 5px;
-    }
-    button:hover {
-      background: #2980b9;
-    }
-    table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      width: 90%;
-      max-width: 900px;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    th, td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-    th {
-      background: #3498db;
-      color: white;
+    body { font-family: "Noto Sans Kurdish", Arial, sans-serif; background: #f3f4f6; }
+    /* card print styling for cleaner PDF */
+    .card-pdf { width: 380px; padding: 20px; box-sizing: border-box; }
+    @media print {
+      body { background: white; }
     }
   </style>
 </head>
-<body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PXXKNPKR"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
+<body class="min-h-screen p-6">
 
-  <header>Qwtabim - سیستەمی گەڕانی قوتابی</header>
+  <header class="max-w-6xl mx-auto text-center mb-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Qwtabim — گەڕان بە کۆدی قوتابی (ID) و دابەزاندنی PDF</h1>
+    <p class="text-sm text-slate-500 mt-2">فایلێکی Excel بار بکە یان بە داتای نموونە کار بکە</p>
+  </header>
 
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="ناوی قوتابی بنووسە..." />
-    <button onclick="searchStudent()">گەڕان</button>
-  </div>
+  <main class="max-w-6xl mx-auto">
 
-  <table id="resultsTable">
-    <thead>
-      <tr>
-        <th>ناو</th>
-        <th>پۆل</th>
-        <th>ژ. قوتابی</th>
-        <th>دروستکەر</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <!-- Controls -->
+    <section class="bg-white rounded-xl p-4 shadow mb-6">
+      <div class="flex flex-col md:flex-row gap-3 items-center">
+        <div class="flex-1 w-full">
+          <label class="block text-sm mb-1">بارکردنی فایل Excel (.xlsx)</label>
+          <input id="fileInput" type="file" accept=".xlsx,.xls" class="w-full" />
+        </div>
 
-  <script>
-    const students = [
-      { name: "علی حسن", grade: "12", id: "101", creator: "محمد سورچی" },
-      { name: "سارا عبدالله", grade: "11", id: "102", creator: "محمد سورچی" },
-      { name: "دیار حەمید", grade: "10", id: "103", creator: "محمد سورچی" },
-      { name: "هەڵبەست کریم", grade: "12", id: "104", creator: "محمد سورچی" }
-    ];
+        <div class="w-full md:w-1/3">
+          <label class="block text-sm mb-1">گەڕان بە ژمارەی قوتابی (ID)</label>
+          <input id="searchInput" type="text" placeholder="ژمارەی قوتابی بنووسە" class="w-full border rounded px-3 py-2" />
+        </div>
 
-    function searchStudent() {
-      const input = document.getElementById("searchInput").value.toLowerCase();
-      const tableBody = document.querySelector("#resultsTable tbody");
-      tableBody.innerHTML = "";
+        <div class="flex gap-2">
+          <button id="searchBtn" class="bg-blue-600 text-white px-4 py-2 rounded">گەڕان</button>
+          <button id="exportAllBtn" class="bg-green-600 text-white px-4 py-2 rounded">دانلودی هەموو کارتەکان (PDF)</button>
+          <button id="useSampleBtn" class="bg-gray-600 text-white px-4 py-2 rounded">بە نموونە کار بکە</button>
+        </div>
+      </div>
 
-      const filtered = students.filter(s =>
-        s.name.toLowerCase().includes(input) ||
-        s.grade.includes(input) ||
-        s.id.includes(input)
-      );
+      <p id="info" class="text-xs text-slate-500 mt-3">ئەگەر فایلی Excel بار نەکەیت، دەتوانیت "بە نموونە کار بکە" بکەیت.</p>
+    </section>
 
-      filtered.forEach(s => {
-        const row = `<tr>
-          <td>${s.name}</td>
-          <td>${s.grade}</td>
-          <td>${s.id}</td>
-          <td>${s.creator}</td>
-        </tr>`;
-        tableBody.innerHTML += row;
-      });
+    <!-- Results -->
+    <section id="resultsSection" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></section>
+
+  </main>
+
+  <footer class="max-w-6xl mx-auto text-center mt-8 text-sm text-slate-500">
+    © <span id="year"></span> Qwtabim
+  </footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Sample data (used if user doesn't upload)
+  const sampleStudents = [
+    { name: "علی حسن", grade: "12", id: "101", creator: "محمد سورچی" },
+    { name: "سارا عبدالله", grade: "11", id: "102", creator: "محمد سورچی" },
+    { name: "دیار حەمید", grade: "10", id: "103", creator: "محمد سورچی" },
+    { name: "هەڵبەست کریم", grade: "12", id: "104", creator: "محمد سورچی" }
+  ];
+
+  let students = [...sampleStudents]; // current dataset
+
+  const fileInput = document.getElementById('fileInput');
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const resultsSection = document.getElementById('resultsSection');
+  const useSampleBtn = document.getElementById('useSampleBtn');
+  const exportAllBtn = document.getElementById('exportAllBtn');
+  const info = document.getElementById('info');
+
+  // Utility: normalize input (digits arabic-indic -> latin)
+  const ARABIC_INDIC = "٠١٢٣٤٥٦٧٨٩";
+  const LATIN = "0123456789";
+  function toLatinDigits(str) {
+    return str.replace(/[٠-٩]/g, d => LATIN[ARABIC_INDIC.indexOf(d)]);
+  }
+
+  // Render cards for a list
+  function renderResults(list) {
+    resultsSection.innerHTML = '';
+    if (!list || list.length === 0) {
+      resultsSection.innerHTML = '<div class="col-span-full bg-white p-6 rounded shadow text-center text-slate-600">هیچ ئەنجامێک نەدۆزرایەوە</div>';
+      return;
     }
-  </script>
+
+    list.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-2xl shadow p-4 text-center flex flex-col justify-between';
+      card.innerHTML = `
+        <div>
+          <h2 class="text-lg font-semibold text-slate-800">${escapeHtml(s.name || '')}</h2>
+          <p class="text-sm text-slate-500 mt-2">پۆل: <span class="font-medium">${escapeHtml(s.grade || '')}</span></p>
+          <p class="text-sm text-slate-500">ژمارەی قوتابی: <span class="font-medium">${escapeHtml(s.id || '')}</span></p>
+          <p class="text-xs text-slate-400 mt-2">دروستکەر: ${escapeHtml(s.creator || '')}</p>
+        </div>
+        <div class="mt-4 flex gap-2 justify-center">
+          <button class="downloadBtn bg-blue-600 text-white px-3 py-1 rounded">دانلود PDF</button>
+        </div>
+      `;
+      // Attach download handler
+      const btn = card.querySelector('.downloadBtn');
+      btn.addEventListener('click', () => downloadCardAsPDF(s, card));
+      resultsSection.appendChild(card);
+    });
+  }
+
+  // Escape HTML (safety)
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // Convert a single card DOM (or data) to PDF and download
+  function downloadCardAsPDF(student, cardDom) {
+    // Clone card into a printable wrapper with consistent size
+    const wrapper = document.createElement('div');
+    wrapper.className = 'card-pdf';
+    // build printable markup (better control for PDF)
+    wrapper.innerHTML = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans Kurdish', Arial, sans-serif; direction: rtl;">
+        <h2 style="font-size:20px;margin:0 0 8px 0;">${escapeHtml(student.name)}</h2>
+        <p style="margin:0;">پۆل: ${escapeHtml(student.grade)}</p>
+        <p style="margin:0;">ژمارەی قوتابی: ${escapeHtml(student.id)}</p>
+        <p style="margin-top:8px;color:#666;">دروستکەر: ${escapeHtml(student.creator)}</p>
+      </div>
+    `;
+    // html2pdf options
+    const opt = {
+      margin:       [10, 10, 10, 10], // top, left, bottom, right
+      filename:     `${student.id || 'student'}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a6', orientation: 'portrait' }
+    };
+    // generate and download
+    html2pdf().set(opt).from(wrapper).save();
+  }
+
+  // Export all visible cards into a single PDF (one per page)
+  function exportAllAsOnePDF(list) {
+    if (!list || list.length === 0) { alert('هیچ ئەنجامێک نییە بۆ داونلۆد'); return; }
+    const container = document.createElement('div');
+    container.style.direction = 'rtl';
+    // append each student as page-sized div
+    list.forEach((s) => {
+      const page = document.createElement('div');
+      page.style.padding = '12px';
+      page.style.pageBreakAfter = 'always';
+      page.innerHTML = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans Kurdish', Arial, sans-serif;">
+          <h2 style="font-size:20px;margin:0 0 6px 0;">${escapeHtml(s.name)}</h2>
+          <p style="margin:0;">پۆل: ${escapeHtml(s.grade)}</p>
+          <p style="margin:0;">ژمارەی قوتابی: ${escapeHtml(s.id)}</p>
+          <p style="margin-top:6px;color:#666;">دروستکەر: ${escapeHtml(s.creator)}</p>
+        </div>
+      `;
+      container.appendChild(page);
+    });
+
+    const opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     `students_all.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(container).save();
+  }
+
+  // Read Excel file (first sheet) and parse rows -> students
+  function handleFile(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      // Convert to JSON, raw values
+      const json = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+      // Try to infer column names (common possibilities)
+      // Accept both Kurdish/Arabic and English headers
+      // prioritize these keys:
+      // name: ['name','ناو','name_ar','full name']
+      // grade: ['grade','پۆل','class']
+      // id: ['id','ژمارە','ژمارەی قوتابی','student id']
+      // creator: ['creator','دروستکەر','created by']
+      const keyMap = {
+        name: ['name','ناو','نام','full name','fullname','studentname'],
+        grade: ['grade','پۆل','class','classno'],
+        id: ['id','ژمارە','ژمارەی قوتابی','student id','studentid'],
+        creator: ['creator','دروستکەر','created by','author']
+      };
+      // create lowercase header map
+      const headers = Object.keys(json[0] || {}).map(h => h.toLowerCase());
+      function findKey(possible) {
+        for (const p of possible) {
+          const idx = headers.indexOf(p.toLowerCase());
+          if (idx !== -1) return Object.keys(json[0])[idx]; // return original header name
+        }
+        return null;
+      }
+      const nameKey = findKey(keyMap.name) || Object.keys(json[0] || {})[0] || 'Name';
+      const gradeKey = findKey(keyMap.grade) || Object.keys(json[0] || {})[1] || 'Grade';
+      const idKey = findKey(keyMap.id) || Object.keys(json[0] || {})[2] || 'ID';
+      const creatorKey = findKey(keyMap.creator) || Object.keys(json[0] || {})[3] || 'Creator';
+
+      const parsed = json.map(row => ({
+        name: String(row[nameKey] ?? '').trim(),
+        grade: String(row[gradeKey] ?? '').trim(),
+        id: String(row[idKey] ?? '').trim(),
+        creator: String(row[creatorKey] ?? '').trim()
+      }));
+
+      students = parsed;
+      info.textContent = `فایل خوێندرا: ${file.name} — ${students.length} ریکۆرد پیدا کرا`; 
+      renderResults(students); // show all initially
+    };
+    reader.onerror = function(err) {
+      console.error(err);
+      alert('هەڵەی خوێندنەوەی فایل ڕویدا');
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Search by ID (exact include) — user requested search by their code
+  function searchById(query) {
+    const q = String(query || '').trim();
+    if (!q) return students;
+    const qLatin = toLatinDigits(q);
+    return students.filter(s => {
+      const id = toLatinDigits(String(s.id || ''));
+      return id.includes(qLatin);
+    });
+  }
+
+  // Event handlers
+  fileInput.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (f) handleFile(f);
+  });
+
+  useSampleBtn.addEventListener('click', () => {
+    students = [...sampleStudents];
+    info.textContent = 'داتاکانی نموونە بارکرا';
+    renderResults(students);
+  });
+
+  searchBtn.addEventListener('click', () => {
+    const q = searchInput.value.trim();
+    const res = searchById(q);
+    renderResults(res);
+  });
+
+  // Allow Enter key in search to trigger
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      searchBtn.click();
+    }
+  });
+
+  // Export all visible as single PDF
+  exportAllBtn.addEventListener('click', () => {
+    // take currently visible cards (filtered)
+    const currentQuery = searchInput.value.trim();
+    const list = searchById(currentQuery);
+    exportAllAsOnePDF(list);
+  });
+
+  // Initial render (sample)
+  renderResults(students);
+
+</script>
 </body>
 </html>
