@@ -16,7 +16,30 @@
   <style>
     /* Define font family for the whole app */
     .kurdish-font, [dir="rtl"] { font-family: "Noto Sans Kurdish", Arial, sans-serif; }
-    body { background: #f3f4f6; position: relative; } 
+    
+    /* FIXED: Apply background image and blur effect */
+    body { 
+      position: relative; 
+      background: #f3f4f6; /* Fallback color */
+      /* Prevent default Tailwind background from overriding */
+      background-image: url('Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+    } 
+    
+    /* Background overlay for blurring and dimming */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(243, 244, 246, 0.8); /* Light overlay for readability */
+      backdrop-filter: blur(5px); /* Apply blur effect to the background image */
+      z-index: -1;
+    }
+
     /* Custom styling for input placeholder */
     input::placeholder { font-family: "Noto Sans Kurdish", Arial, sans-serif; }
 
@@ -24,21 +47,26 @@
     .card-pdf { width: 450px; padding: 30px; box-sizing: border-box; }
     @media print {
       body { background: white; }
+      body::before { display: none; }
     }
     
-    /* Custom logo positioning for RTL layout (Top-Left) */
+    /* Custom logo positioning for RTL layout (Top-Left) and alignment with text */
     .logo-container {
       position: absolute;
       top: 24px; /* p-6 */
       left: 24px; /* p-6 in RTL */
       z-index: 10;
+      display: flex; /* Enable flexbox for logo and text alignment */
+      align-items: center; 
+      gap: 12px; /* Space between logo and text */
     }
   </style>
 </head>
 <body class="min-h-screen p-6 kurdish-font">
 
     <div class="logo-container">
-    <img src="Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg" alt="Logo" class="h-24 w-24 rounded-full shadow-xl object-cover" /> 
+    <img src="Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg" alt="Logo" class="h-20 w-20 rounded-full shadow-xl object-cover" /> 
+        <span class="text-3xl font-extrabold text-slate-800 tracking-wider">Qwtabim</span>
   </div>
 
     <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -97,7 +125,6 @@
   ];
 
   // 2. DATAY QUTABIYAN (BA NAW U NMRY CHESPRAW)
-  // ADDED: BASHAR SHER
   const rawStudentsData = [
     { 
       "ID": "123", 
@@ -121,7 +148,7 @@
       "ID": "126", 
       "Name": "بشار شێر", 
       "Grade": "12 زانستی",
-      "Scores": [75, 70, 65, 60, 55, 50, 45] // NEW SCORES
+      "Scores": [75, 70, 65, 60, 55, 50, 45] 
     }
   ];
   
