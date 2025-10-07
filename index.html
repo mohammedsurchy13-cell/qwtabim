@@ -219,10 +219,11 @@
             </tbody>
           </table>
         </div>
-        <div class="mt-6 pt-3 border-t-2 border-slate-700 space-y-2">
-          <p class="text-md font-bold text-slate-800 flex justify-between">
-            <span>کۆی گشتی نمرەکان:</span>
-            <span class="${totalScore/maxTotal < 0.5 ? 'text-red-600' : 'text-green-600'}">${totalScore} / ${maxTotal}</span>
+      </div>
+      <div class="mt-6 pt-3 border-t-2 border-slate-700 space-y-2">
+        <p class="text-md font-bold text-slate-800 flex justify-between">
+          <span>کۆی گشتی نمرەکان:</span>
+          <span class="${totalScore/maxTotal < 0.5 ? 'text-red-600' : 'text-green-600'}">${totalScore} / ${maxTotal}</span>
         </p>
         <p class="text-md font-bold text-slate-800 flex justify-between">
           <span>تێکڕای نمرە (ڕێژەی سەدی):</span>
@@ -273,7 +274,8 @@
 
   // Convert a single card DOM (or data) to PDF and download
   async function downloadCardAsPDF(student) {
-    setLoading(true, `دروستکردنی کارتی ئەنجام بۆ ${student.id}...`);
+    // FIXED: Use student name in loading message
+    setLoading(true, `دروستکردنی کارتی ئەنجام بۆ ${student.name} (${student.id})...`);
 
     const wrapper = document.createElement('div');
     wrapper.className = 'card-pdf';
@@ -343,7 +345,7 @@
     // html2pdf options (Format is A4 to ensure single page output)
     const opt = {
       margin:       [10, 10, 10, 10],
-      filename:     `${toLatinDigits(student.id || 'student')}_result_card.pdf`,
+      filename:     `${toLatinDigits(student.id || 'student')}_${student.name}_result_card.pdf`, // FIXED: Added name to filename
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 3, useCORS: true },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' } 
