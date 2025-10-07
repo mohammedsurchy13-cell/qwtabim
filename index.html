@@ -339,13 +339,14 @@
             <span style="color: ${finalResult === 'دەرچوو' ? '#10b981' : '#ef4444'};">${finalResult}</span>
           </p>
         </div>
+        
       </div>
     `;
 
     // html2pdf options (Format is A4 to ensure single page output)
     const opt = {
       margin:       [10, 10, 10, 10],
-      filename:     `${toLatinDigits(student.id || 'student')}_${student.name}_result_card.pdf`, // FIXED: Added name to filename
+      filename:     `${toLatinDigits(student.id || 'student')}_${student.name}_result_card.pdf`, 
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 3, useCORS: true },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' } 
