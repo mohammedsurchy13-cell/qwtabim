@@ -97,6 +97,7 @@
   ];
 
   // 2. DATAY QUTABIYAN (BA NAW U NMRY CHESPRAW)
+  // ADDED: BASHAR SHER
   const rawStudentsData = [
     { 
       "ID": "123", 
@@ -115,6 +116,12 @@
       "Name": "سلام نزار", 
       "Grade": "12 زانستی",
       "Scores": [80, 75, 70, 65, 60, 55, 50] 
+    },
+    { 
+      "ID": "126", 
+      "Name": "بشار شێر", 
+      "Grade": "12 زانستی",
+      "Scores": [75, 70, 65, 60, 55, 50, 45] // NEW SCORES
     }
   ];
   
@@ -274,7 +281,6 @@
 
   // Convert a single card DOM (or data) to PDF and download
   async function downloadCardAsPDF(student) {
-    // FIXED: Use student name in loading message
     setLoading(true, `دروستکردنی کارتی ئەنجام بۆ ${student.name} (${student.id})...`);
 
     const wrapper = document.createElement('div');
@@ -339,7 +345,6 @@
             <span style="color: ${finalResult === 'دەرچوو' ? '#10b981' : '#ef4444'};">${finalResult}</span>
           </p>
         </div>
-        
       </div>
     `;
 
