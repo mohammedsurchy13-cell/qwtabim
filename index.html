@@ -74,7 +74,6 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 
   // 1. DATAY WANAKAN (7 WANAKA)
-  // Max score for all subjects is 100
   const fixedSubjects = [
     { name: "کوردی", max: 100 },
     { name: "عەرەبی", max: 100 },
@@ -86,7 +85,6 @@
   ];
 
   // 2. DATAY QUTABIYAN (BA NAW U NMRY CHESPRAW)
-  // The length of the Scores array must match the length of fixedSubjects (7 scores)
   const rawStudentsData = [
     { 
       "ID": "123", 
@@ -218,29 +216,3 @@
         <p class="text-3xl font-extrabold flex justify-between p-3 rounded bg-gray-50 border shadow-inner">
           <span>ئەنجامی کۆتایی:</span>
           <span class="${finalResult === 'دەرچوو' ? 'text-green-700' : 'text-red-700'}">${finalResult}</span>
-        </p>
-      </div>
-  `;
-  }
-
-  // Render cards for a list
-  function renderResults(list) {
-    resultsSection.innerHTML = '';
-    if (!list || list.length === 0) {
-      resultsSection.innerHTML = '<div class="col-span-full bg-white p-6 rounded shadow text-center text-slate-600">هیچ ئەنجامێک نەدۆزرایەوە بەم کۆدە. تکایە ID ڕاست بنووسە.</div>';
-      return;
-    }
-
-    list.forEach(s => {
-      const card = document.createElement('div');
-      card.className = 'bg-white rounded-2xl shadow p-6 flex flex-col justify-between max-w-2xl mx-auto';
-      
-      const resultsHtml = generateResultsTable(s.results);
-
-      card.innerHTML = `
-        <div class="text-right">
-          <h1 class="text-2xl font-bold text-blue-800 border-b pb-2 mb-4">کارتی ئەنجامی قوتابی</h1>
-          <p class="text-md text-slate-700 mb-2">ناوی قوتابی: <span class="font-bold">${escapeHtml(s.name)}</span></p>
-          <p class="text-md text-slate-700 mb-2">پۆل: <span class="font-bold">${escapeHtml(s.grade)}</span></p>
-          <p class="text-md text-slate-700">ژمارەی قوتابی (ID): <span class="font-bold text-red-600">${escapeHtml(s.id)}</span></p>
-        </div>
