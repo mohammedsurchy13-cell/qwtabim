@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Qwtabim — گەڕان و کارتی قوتابی</title>
+  <title>Qwtabim — کارتی ئەنجامی قوتابی</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
     input::placeholder { font-family: "Noto Sans Kurdish", Arial, sans-serif; }
 
     /* card print styling for cleaner PDF */
-    .card-pdf { width: 380px; padding: 20px; box-sizing: border-box; }
+    .card-pdf { width: 450px; padding: 30px; box-sizing: border-box; } /* Zyatr gawra krdn bo karti nmera */
     @media print {
       body { background: white; }
     }
@@ -40,8 +40,8 @@
   </div>
 
   <header class="max-w-6xl mx-auto text-center mb-6">
-    <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Qwtabim — گەڕان بە کۆدی قوتابی (ID) و دابەزاندنی PDF</h1>
-    <p class="text-sm text-slate-500 mt-2">ئەم بەشە پشت بە داتای ناوخۆیی (چەسپاو) دەبەستێت.</p>
+    <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Qwtabim — دۆزینەوەی کارتی ئەنجام</h1>
+    <p class="text-sm text-slate-500 mt-2">تەنها بە کۆدی قوتابی (ID) بگەڕێ بۆ دۆزینەوەی ئەنجام.</p>
   </header>
 
   <main class="max-w-6xl mx-auto">
@@ -50,20 +50,20 @@
       <div class="flex flex-col md:flex-row gap-3 items-center justify-center">
 
         <div class="w-full md:w-1/3">
-          <label for="searchInput" class="block text-sm mb-1">گەڕان بە ژمارەی قوتابی (ID) یان ناو</label>
-          <input id="searchInput" type="text" placeholder="ژمارەی قوتابی یان ناو بنووسە" class="w-full border rounded px-3 py-2" />
+          <label for="searchInput" class="block text-sm mb-1">گەڕان بە ژمارەی قوتابی (ID)</label>
+          <input id="searchInput" type="text" placeholder="ژمارەی قوتابی بنووسە" class="w-full border rounded px-3 py-2" />
         </div>
 
         <div class="flex gap-2 mt-auto">
           <button id="searchBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">گەڕان</button>
-          <button id="exportAllBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">دانلودی هەموو کارتەکان (PDF)</button>
+          <button id="exportAllBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition" style="display: none;">دانلودی هەموو کارتەکان (PDF)</button>
         </div>
       </div>
 
-      <p id="info" class="text-xs text-slate-500 mt-3 text-center">ئێستا <span id="studentCount">...</span> قوتابی لە داتای ناوخۆییدا هەیە.</p>
+      <p id="info" class="text-xs text-slate-500 mt-3 text-center">ئێستا <span id="studentCount">...</span> قوتابی لە سیستەمەکەدا هەیە. بە ID وەک **1001** بگەڕێ.</p>
     </section>
 
-        <section id="resultsSection" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></section>
+        <section id="resultsSection" class="grid sm:grid-cols-1 lg:grid-cols-1 gap-4"></section>
 
   </main>
 
@@ -74,8 +74,7 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // 1. DATAY QUTABIYAN LA EXCEL-awa CHESPENDRT
-  // BKOYAWA: ID, Name, Grade kewistn
+  // 1. DATAY QUTABIYAN LA EXCEL-awa CHESPENDRT (ID, Name, Grade)
   const rawStudentsData = [
     { "ID": "1001", "Name": "شیلان ئەحمەد", "Grade": "12A" },
     { "ID": "1002", "Name": "ئارام جەمال", "Grade": "11C" },
@@ -93,6 +92,17 @@
     { "ID": "1014", "Name": "سەفین هەڵمەت", "Grade": "12A" },
     { "ID": "1015", "Name": "شادی جەلیل", "Grade": "9C" }
   ];
+  
+  // 2. DATAY NMERAKAN (BA SHEWAI RANDOM WAK NUMUNNA)
+  // Am beha xoshm durst krdwa bo nishandani karti nmera
+  const subjectGrades = [
+    { subject: "بیرکاری", grade: 85, final: 170 },
+    { subject: "کوردی", grade: 92, final: 184 },
+    { subject: "ئینگلیزی", grade: 78, final: 156 },
+    { subject: "زانست/فیزیا", grade: 89, final: 178 },
+    { subject: "مێژوو", grade: 95, final: 190 }
+  ];
+
 
   // Prepare data for better searching and consistent keys
   const students = rawStudentsData.map(s => {
@@ -103,8 +113,14 @@
       nameLower: name.toLowerCase(),
       grade: String(s.Grade || 'نادیار').trim(),
       id: id,
+      // Add random grades for display (for demonstration)
+      results: subjectGrades.map(sg => ({
+        ...sg,
+        grade: Math.floor(Math.random() * (100 - 70 + 1)) + 70,
+        final: Math.floor(Math.random() * (200 - 140 + 1)) + 140,
+      })),
     };
-  }).filter(s => s.name && s.id); // Filter out rows missing Name or ID
+  }).filter(s => s.name && s.id);
 
 
   const searchInput = document.getElementById('searchInput');
@@ -136,60 +152,149 @@
       btn.disabled = show;
     });
   }
+  
+  // Function to generate the results table HTML
+  function generateResultsTable(results) {
+    let totalScore = 0;
+    let maxTotal = 0;
+    
+    const rows = results.map(r => {
+      totalScore += r.final;
+      maxTotal += 200; // Assume max score per subject is 200
+      return `
+        <tr class="border-b">
+          <td class="px-4 py-2 text-right">${escapeHtml(r.subject)}</td>
+          <td class="px-4 py-2 text-center">${escapeHtml(r.grade)} / 100</td>
+          <td class="px-4 py-2 text-center font-bold ${r.final < 100 ? 'text-red-600' : 'text-green-600'}">${escapeHtml(r.final)} / 200</td>
+        </tr>
+      `;
+    }).join('');
+    
+    return `
+      <div class="mt-4">
+        <h3 class="text-lg font-semibold mb-2 border-b pb-1 text-slate-700">ئەنجامی وانەکان</h3>
+        <table class="min-w-full bg-white text-sm">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="px-4 py-2 text-right">وانە</th>
+              <th class="px-4 py-2 text-center">نمرەی کۆتایی</th>
+              <th class="px-4 py-2 text-center">کۆی نمرە (200)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 pt-3 border-t-2 border-slate-700">
+        <p class="text-md font-bold text-slate-800 flex justify-between">
+          <span>کۆی گشتی نمرەکان:</span>
+          <span class="${totalScore/maxTotal < 0.5 ? 'text-red-600' : 'text-green-600'}">${totalScore} / ${maxTotal}</span>
+        </p>
+      </div>
+  `;
+  }
 
   // Render cards for a list
   function renderResults(list) {
     resultsSection.innerHTML = '';
     if (!list || list.length === 0) {
-      resultsSection.innerHTML = '<div class="col-span-full bg-white p-6 rounded shadow text-center text-slate-600">هیچ ئەنجامێک نەدۆزرایەوە</div>';
+      resultsSection.innerHTML = '<div class="col-span-full bg-white p-6 rounded shadow text-center text-slate-600">هیچ ئەنجامێک نەدۆزرایەوە بەم کۆدە</div>';
       return;
     }
 
     list.forEach(s => {
       const card = document.createElement('div');
-      card.className = 'bg-white rounded-2xl shadow p-4 text-center flex flex-col justify-between';
-      // No Creator field in card markup
+      card.className = 'bg-white rounded-2xl shadow p-6 flex flex-col justify-between max-w-xl mx-auto';
+      
+      const resultsHtml = generateResultsTable(s.results);
+
       card.innerHTML = `
-        <div>
-          <h2 class="text-lg font-semibold text-slate-800">${escapeHtml(s.name)}</h2>
-          <p class="text-sm text-slate-500 mt-2">پۆل: <span class="font-medium">${escapeHtml(s.grade)}</span></p>
-          <p class="text-sm text-slate-500">ژمارەی قوتابی: <span class="font-medium">${escapeHtml(s.id)}</span></p>
+        <div class="text-right">
+          <h1 class="text-2xl font-bold text-blue-800 border-b pb-2 mb-4">کارتی ئەنجامی قوتابی</h1>
+          <p class="text-md text-slate-700 mb-2">ناوی قوتابی: <span class="font-bold">${escapeHtml(s.name)}</span></p>
+          <p class="text-md text-slate-700 mb-2">پۆل: <span class="font-bold">${escapeHtml(s.grade)}</span></p>
+          <p class="text-md text-slate-700">ژمارەی قوتابی (ID): <span class="font-bold text-red-600">${escapeHtml(s.id)}</span></p>
         </div>
-        <div class="mt-4 flex gap-2 justify-center">
-          <button class="downloadBtn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">دانلود PDF</button>
+        
+        ${resultsHtml}
+
+        <div class="mt-6 border-t pt-4 flex gap-2 justify-end">
+          <button class="downloadBtn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition font-medium">دانلودی کارتی ئەنجام (PDF)</button>
         </div>
       `;
       // Attach download handler
       const btn = card.querySelector('.downloadBtn');
-      btn.addEventListener('click', () => downloadCardAsPDF(s, btn));
+      btn.addEventListener('click', () => downloadCardAsPDF(s));
       resultsSection.appendChild(card);
     });
   }
 
   // Convert a single card DOM (or data) to PDF and download
-  async function downloadCardAsPDF(student, button) {
-    setLoading(true, `دروستکردنی کارتی ${student.id}...`);
+  async function downloadCardAsPDF(student) {
+    setLoading(true, `دروستکردنی کارتی ئەنجام بۆ ${student.id}...`);
 
-    // build printable markup (better control for PDF)
+    // Create a dedicated wrapper for PDF (to control printing style)
     const wrapper = document.createElement('div');
     wrapper.className = 'card-pdf';
-    // No Creator field in printable PDF markup
+    
+    // Duplicate the rendering logic for PDF consistency
+    let totalScore = 0;
+    let maxTotal = 0;
+    
+    const rowsHtml = student.results.map(r => {
+      totalScore += r.final;
+      maxTotal += 200;
+      return `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 8px; text-align: right;">${escapeHtml(r.subject)}</td>
+          <td style="padding: 8px; text-align: center;">${escapeHtml(r.grade)} / 100</td>
+          <td style="padding: 8px; text-align: center; font-weight: bold; color: ${r.final < 100 ? '#dc2626' : '#16a34a'};">${escapeHtml(r.final)} / 200</td>
+        </tr>
+      `;
+    }).join('');
+    
     wrapper.innerHTML = `
-      <div style="font-family: 'Noto Sans Kurdish', Arial, sans-serif; direction: rtl; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
-        <h2 style="font-size:22px;margin:0 0 10px 0; font-weight: 600;">${escapeHtml(student.name)}</h2>
-        <p style="margin:0 0 5px 0; font-size: 14px;">پۆل: <span style="font-weight: 500;">${escapeHtml(student.grade)}</span></p>
-        <p style="margin:0 0 5px 0; font-size: 14px;">ژمارەی قوتابی: <span style="font-weight: 500;">${escapeHtml(student.id)}</span></p>
+      <div style="font-family: 'Noto Sans Kurdish', Arial, sans-serif; direction: rtl; padding: 15px; border: 1px solid #1f2937; border-radius: 8px;">
+        <div style="text-align: right; border-bottom: 2px solid #1f2937; padding-bottom: 10px; margin-bottom: 15px;">
+          <h1 style="font-size: 24px; margin: 0; font-weight: 700; color: #1e40af;">کارتی ئەنجامی قوتابی</h1>
+        </div>
+        <p style="margin: 0 0 5px 0; font-size: 16px;">ناوی قوتابی: <span style="font-weight: 700;">${escapeHtml(student.name)}</span></p>
+        <p style="margin: 0 0 5px 0; font-size: 16px;">پۆل: <span style="font-weight: 700;">${escapeHtml(student.grade)}</span></p>
+        <p style="margin: 0 0 15px 0; font-size: 16px;">ژمارەی قوتابی (ID): <span style="font-weight: 700; color: #dc2626;">${escapeHtml(student.id)}</span></p>
+
+        <div style="border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead style="background-color: #f3f4f6;">
+              <tr style="border-bottom: 2px solid #ccc;">
+                <th style="padding: 8px; text-align: right;">وانە</th>
+                <th style="padding: 8px; text-align: center;">نمرەی کۆتایی (100)</th>
+                <th style="padding: 8px; text-align: center;">کۆی نمرە (200)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 15px; padding-top: 10px; border-top: 2px solid #1f2937;">
+          <p style="font-size: 16px; font-weight: 700; display: flex; justify-content: space-between;">
+            <span>کۆی گشتی نمرەکان:</span>
+            <span style="color: ${totalScore/maxTotal < 0.5 ? '#dc2626' : '#16a34a'};">${totalScore} / ${maxTotal}</span>
+          </p>
+        </div>
       </div>
     `;
 
-    // html2pdf options (A7-ish size)
+    // html2pdf options (A6 or similar size for a card)
     const opt = {
-      margin:       [5, 5, 5, 5],
-      filename:     `${toLatinDigits(student.id || 'student')}_${student.nameLower || 'card'}.pdf`,
+      margin:       [10, 10, 10, 10],
+      filename:     `${toLatinDigits(student.id || 'student')}_result_card.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 3, useCORS: true },
-      jsPDF:        { unit: 'mm', format: [105, 74], orientation: 'portrait' }
+      jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' } // Using A5 for a larger card-like result
     };
+    
     try {
       await html2pdf().set(opt).from(wrapper).save();
     } catch (error) {
@@ -200,40 +305,44 @@
     }
   }
 
-  // Export all visible cards into a single PDF (one per page)
-  async function exportAllAsOnePDF(list) {
-    if (!list || list.length === 0) { alert('هیچ ئەنجامێک نییە بۆ داونلۆد'); return; }
+  // Search only by ID (exact match)
+  function search(query) {
+    const q = String(query || '').trim();
+    if (!q) return []; // Return nothing if no query
 
-    setLoading(true, `دروستکردنی ${list.length} کارت لە یەک فایلدا...`);
+    const qLatin = toLatinDigits(q);
 
-    const container = document.createElement('div');
-    container.style.direction = 'rtl';
-    // append each student as page-sized div (A4)
-    list.forEach((s) => {
-      const page = document.createElement('div');
-      page.style.padding = '20px';
-      page.style.pageBreakAfter = 'always';
-      page.style.width = '210mm';
-      page.style.height = '297mm';
-      // No Creator field in batch PDF markup
-      page.innerHTML = `
-        <div style="font-family: 'Noto Sans Kurdish', Arial, sans-serif; border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
-          <h2 style="font-size:24px;margin:0 0 10px 0; font-weight: 700;">${escapeHtml(s.name)}</h2>
-          <p style="margin:0 0 5px 0;">پۆل: <span style="font-weight: 500;">${escapeHtml(s.grade)}</span></p>
-          <p style="margin:0 0 5px 0;">ژمارەی قوتابی: <span style="font-weight: 500;">${escapeHtml(s.id)}</span></p>
-        </div>
-      `;
-      container.appendChild(page);
+    // Filter for exact ID match
+    const result = students.filter(s => {
+      const id = toLatinDigits(String(s.id || ''));
+      return id === qLatin; // Exact match on ID
     });
+    return result;
+  }
 
-    const opt = {
-      margin:       [0, 0, 0, 0],
-      filename:     `students_all_cards.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    try {
-      await html2pdf().set(opt).from(container).save();
-    } catch
+  // Event handlers
+  searchBtn.addEventListener('click', () => {
+    const q = searchInput.value.trim();
+    const res = search(q);
+    renderResults(res);
+  });
+
+  // Allow Enter key in search to trigger
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      searchBtn.click();
+    }
+  });
+
+  // Export all button is hidden, but keep the function (just in case)
+  exportAllBtn.addEventListener('click', () => {
+    alert("ئەم تایبەتمەندییە لابراوە بۆ گەڕانی تاکەکەسی.");
+  });
+
+  // Initial setup
+  document.getElementById('studentCount').textContent = students.length;
+  renderResults([]); // Start with no results
+
+</script>
+</body>
+</html>
