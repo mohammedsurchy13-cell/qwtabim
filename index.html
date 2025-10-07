@@ -16,7 +16,7 @@
   <style>
     /* Define font family for the whole app */
     .kurdish-font, [dir="rtl"] { font-family: "Noto Sans Kurdish", Arial, sans-serif; }
-    body { background: #f3f4f6; }
+    body { background: #f3f4f6; position: relative; } /* Added relative position to body for absolute positioning of logo */
     /* Custom styling for input placeholder */
     input::placeholder { font-family: "Noto Sans Kurdish", Arial, sans-serif; }
 
@@ -25,9 +25,21 @@
     @media print {
       body { background: white; }
     }
+    
+    /* Custom logo positioning for RTL layout (Top-Left) */
+    .logo-container {
+      position: absolute;
+      top: 24px; /* 6 (p-6) */
+      left: 24px; /* p-6 in RTL layout means left padding is 24px */
+      z-index: 10;
+    }
   </style>
 </head>
 <body class="min-h-screen p-6 kurdish-font">
+
+    <div class="logo-container">
+    <img src="photo_2025-09-11_17-25-46-removebg-preview.png" alt="Logo" class="h-16 w-auto" />
+  </div>
 
     <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white p-6 rounded-lg shadow-xl flex items-center gap-4 kurdish-font">
@@ -51,7 +63,7 @@
 
         <div class="w-full md:w-1/3">
           <label for="searchInput" class="block text-sm mb-1">گەڕان بە ژمارەی قوتابی (ID)</label>
-                    <input id="searchInput" type="text" placeholder="بۆ نموونە: 123, 124, یان 125" class="w-full border rounded px-3 py-2" />
+          <input id="searchInput" type="text" placeholder="بۆ نموونە: 123, 124, یان 125" class="w-full border rounded px-3 py-2" />
         </div>
 
         <div class="flex gap-2 mt-auto">
@@ -142,7 +154,6 @@
   const ARABIC_INDIC = "٠١٢٣٤٥٦٧٨٩";
   const LATIN = "0123456789";
   
-  // ***FIXED FUNCTION: Ensures input is cleaned of spaces and translated to Latin digits***
   function toLatinDigits(str) {
     str = String(str || '').replace(/\s/g, ''); 
     return str.replace(/[٠-٩]/g, d => LATIN[ARABIC_INDIC.indexOf(d)]);
