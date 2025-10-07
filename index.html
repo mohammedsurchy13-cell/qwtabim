@@ -21,7 +21,7 @@
     input::placeholder { font-family: "Noto Sans Kurdish", Arial, sans-serif; }
 
     /* card print styling for cleaner PDF */
-    .card-pdf { width: 450px; padding: 30px; box-sizing: border-box; } /* Zyatr gawra krdn bo karti nmera */
+    .card-pdf { width: 450px; padding: 30px; box-sizing: border-box; }
     @media print {
       body { background: white; }
     }
@@ -51,16 +51,15 @@
 
         <div class="w-full md:w-1/3">
           <label for="searchInput" class="block text-sm mb-1">گەڕان بە ژمارەی قوتابی (ID)</label>
-          <input id="searchInput" type="text" placeholder="ژمارەی قوتابی بنووسە" class="w-full border rounded px-3 py-2" />
+          <input id="searchInput" type="text" placeholder="ژمارەی قوتابی بنووسە (بۆ نموونە: 123)" class="w-full border rounded px-3 py-2" />
         </div>
 
         <div class="flex gap-2 mt-auto">
           <button id="searchBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">گەڕان</button>
-          <button id="exportAllBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition" style="display: none;">دانلودی هەموو کارتەکان (PDF)</button>
         </div>
       </div>
 
-      <p id="info" class="text-xs text-slate-500 mt-3 text-center">ئێستا <span id="studentCount">...</span> قوتابی لە سیستەمەکەدا هەیە. بە ID وەک **1001** بگەڕێ.</p>
+      <p id="info" class="text-xs text-slate-500 mt-3 text-center">ئێستا <span id="studentCount">...</span> قوتابی لە سیستەمەکەدا هەیە. بە ID وەک **123**، **124** یان **125** بگەڕێ.</p>
     </section>
 
         <section id="resultsSection" class="grid sm:grid-cols-1 lg:grid-cols-1 gap-4"></section>
@@ -74,51 +73,64 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // 1. DATAY QUTABIYAN LA EXCEL-awa CHESPENDRT (ID, Name, Grade)
+  // 1. DATAY WANAKAN (9 WANAKA)
+  // Max score for all subjects is 100
+  const fixedSubjects = [
+    { name: "پەروەردەی ئیسلامی", max: 100 },
+    { name: "کوردی", max: 100 },
+    { name: "عەرەبی", max: 100 },
+    { name: "ئینگلیزی", max: 100 },
+    { name: "بیرکاری", max: 100 },
+    { name: "فیزیا", max: 100 },
+    { name: "کیمیا", max: 100 },
+    { name: "زیندەوەر", max: 100 },
+    { name: "پەروەردەی هونەر", max: 100 }
+  ];
+
+  // 2. DATAY QUTABIYAN (BA NAW U NMRY CHESPRAW)
+  // The length of the Scores array must match the length of fixedSubjects (9 scores)
   const rawStudentsData = [
-    { "ID": "1001", "Name": "شیلان ئەحمەد", "Grade": "12A" },
-    { "ID": "1002", "Name": "ئارام جەمال", "Grade": "11C" },
-    { "ID": "1003", "Name": "سۆزان ڕێبوار", "Grade": "10B" },
-    { "ID": "1004", "Name": "کاوە حەیدەر", "Grade": "12A" },
-    { "ID": "1005", "Name": "هەردی عومەر", "Grade": "9D" },
-    { "ID": "1006", "Name": "ئازاد محەمەد", "Grade": "11A" },
-    { "ID": "1007", "Name": "لەیلا کەریم", "Grade": "10C" },
-    { "ID": "1008", "Name": "ڕێباز خالید", "Grade": "12B" },
-    { "ID": "1009", "Name": "پەرواز فایەق", "Grade": "9A" },
-    { "ID": "1010", "Name": "زانا عەبدولڕەحمان", "Grade": "11B" },
-    { "ID": "1011", "Name": "نەرمین سۆفی", "Grade": "12C" },
-    { "ID": "1012", "Name": "بڵند مەجید", "Grade": "11A" },
-    { "ID": "1013", "Name": "مەریەم تاهیر", "Grade": "10B" },
-    { "ID": "1014", "Name": "سەفین هەڵمەت", "Grade": "12A" },
-    { "ID": "1015", "Name": "شادی جەلیل", "Grade": "9C" }
+    { 
+      "ID": "123", 
+      "Name": "محمد بریندار", 
+      "Grade": "12 زانستی",
+      "Scores": [100, 99, 90, 85, 95, 90, 85, 90, 95] 
+    },
+    { 
+      "ID": "124", 
+      "Name": "ئازاد کرم", 
+      "Grade": "12 زانستی",
+      "Scores": [98, 90, 95, 90, 88, 95, 100, 99, 90] 
+    },
+    { 
+      "ID": "125", 
+      "Name": "سلام نزار", 
+      "Grade": "12 زانستی",
+      "Scores": [85, 80, 75, 70, 65, 60, 55, 50, 45] 
+    }
   ];
   
-  // 2. DATAY NMERAKAN (BA SHEWAI RANDOM WAK NUMUNNA)
-  // Am beha xoshm durst krdwa bo nishandani karti nmera
-  const subjectGrades = [
-    { subject: "بیرکاری", grade: 85, final: 170 },
-    { subject: "کوردی", grade: 92, final: 184 },
-    { subject: "ئینگلیزی", grade: 78, final: 156 },
-    { subject: "زانست/فیزیا", grade: 89, final: 178 },
-    { subject: "مێژوو", grade: 95, final: 190 }
-  ];
 
-
-  // Prepare data for better searching and consistent keys
+  // Prepare data: Combine student info with fixed subjects and actual scores
   const students = rawStudentsData.map(s => {
     const name = String(s.Name || '').trim();
     const id = String(s.ID || '').trim();
+    
+    // Map scores from array to subject objects
+    const results = fixedSubjects.map((subject, index) => {
+      return {
+        subject: subject.name,
+        max: subject.max,
+        final: s.Scores[index] !== undefined ? s.Scores[index] : 0 // Use the provided score, or 0 if missing
+      };
+    });
+
     return {
       name: name,
       nameLower: name.toLowerCase(),
       grade: String(s.Grade || 'نادیار').trim(),
       id: id,
-      // Add random grades for display (for demonstration)
-      results: subjectGrades.map(sg => ({
-        ...sg,
-        grade: Math.floor(Math.random() * (100 - 70 + 1)) + 70,
-        final: Math.floor(Math.random() * (200 - 140 + 1)) + 140,
-      })),
+      results: results,
     };
   }).filter(s => s.name && s.id);
 
@@ -126,7 +138,6 @@
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
   const resultsSection = document.getElementById('resultsSection');
-  const exportAllBtn = document.getElementById('exportAllBtn');
   const loadingModal = document.getElementById('loadingModal');
   const loadingText = document.getElementById('loadingText');
 
@@ -147,9 +158,12 @@
   function setLoading(show, text = 'دروستکردنی PDF...') {
     loadingText.textContent = text;
     loadingModal.style.display = show ? 'flex' : 'none';
-    // Disable all buttons while loading
     document.querySelectorAll('button').forEach(btn => {
-      btn.disabled = show;
+      if (btn.id !== 'searchBtn') { 
+        btn.disabled = show;
+      } else {
+        btn.disabled = false;
+      }
     });
   }
   
@@ -157,39 +171,55 @@
   function generateResultsTable(results) {
     let totalScore = 0;
     let maxTotal = 0;
+    let overallPass = true;
     
     const rows = results.map(r => {
       totalScore += r.final;
-      maxTotal += 200; // Assume max score per subject is 200
+      maxTotal += r.max;
+      
+      // Pass/Fail logic: assuming 50% needed to pass each subject
+      const isPassed = r.final >= (r.max / 2);
+      if (!isPassed) overallPass = false;
+      
       return `
-        <tr class="border-b">
-          <td class="px-4 py-2 text-right">${escapeHtml(r.subject)}</td>
-          <td class="px-4 py-2 text-center">${escapeHtml(r.grade)} / 100</td>
-          <td class="px-4 py-2 text-center font-bold ${r.final < 100 ? 'text-red-600' : 'text-green-600'}">${escapeHtml(r.final)} / 200</td>
+        <tr class="border-b hover:bg-gray-50">
+          <td class="px-4 py-2 text-right w-1/3">${escapeHtml(r.subject)}</td>
+          <td class="px-4 py-2 text-center font-bold ${isPassed ? 'text-green-600' : 'text-red-600'}">${escapeHtml(r.final)}</td>
+          <td class="px-4 py-2 text-center">${escapeHtml(r.max)}</td>
         </tr>
       `;
     }).join('');
     
+    const averagePercentage = (totalScore / maxTotal) * 100;
+    // Final result logic: Must have overall 50% AND pass all individual subjects
+    const finalResult = (averagePercentage >= 50 && overallPass) ? 'دەرچوو' : 'دەرنەچوو';
+
     return `
       <div class="mt-4">
         <h3 class="text-lg font-semibold mb-2 border-b pb-1 text-slate-700">ئەنجامی وانەکان</h3>
-        <table class="min-w-full bg-white text-sm">
-          <thead>
-            <tr class="bg-gray-100">
-              <th class="px-4 py-2 text-right">وانە</th>
-              <th class="px-4 py-2 text-center">نمرەی کۆتایی</th>
-              <th class="px-4 py-2 text-center">کۆی نمرە (200)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows}
-          </tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white text-sm border">
+            <thead>
+              <tr class="bg-gray-100 border-b">
+                <th class="px-4 py-2 text-right w-1/3">وانە</th>
+                <th class="px-4 py-2 text-center">نمرە</th>
+                <th class="px-4 py-2 text-center">کۆی گشتی (Max)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="mt-4 pt-3 border-t-2 border-slate-700">
+      <div class="mt-6 pt-3 border-t-2 border-slate-700 space-y-2">
         <p class="text-md font-bold text-slate-800 flex justify-between">
           <span>کۆی گشتی نمرەکان:</span>
           <span class="${totalScore/maxTotal < 0.5 ? 'text-red-600' : 'text-green-600'}">${totalScore} / ${maxTotal}</span>
+        </p>
+        <p class="text-3xl font-extrabold flex justify-between p-3 rounded bg-gray-50 border shadow-inner">
+          <span>ئەنجامی کۆتایی:</span>
+          <span class="${finalResult === 'دەرچوو' ? 'text-green-700' : 'text-red-700'}">${finalResult}</span>
         </p>
       </div>
   `;
@@ -199,13 +229,13 @@
   function renderResults(list) {
     resultsSection.innerHTML = '';
     if (!list || list.length === 0) {
-      resultsSection.innerHTML = '<div class="col-span-full bg-white p-6 rounded shadow text-center text-slate-600">هیچ ئەنجامێک نەدۆزرایەوە بەم کۆدە</div>';
+      resultsSection.innerHTML = '<div class="col-span-full bg-white p-6 rounded shadow text-center text-slate-600">هیچ ئەنجامێک نەدۆزرایەوە بەم کۆدە. تکایە ID ڕاست بنووسە.</div>';
       return;
     }
 
     list.forEach(s => {
       const card = document.createElement('div');
-      card.className = 'bg-white rounded-2xl shadow p-6 flex flex-col justify-between max-w-xl mx-auto';
+      card.className = 'bg-white rounded-2xl shadow p-6 flex flex-col justify-between max-w-2xl mx-auto';
       
       const resultsHtml = generateResultsTable(s.results);
 
@@ -234,42 +264,49 @@
   async function downloadCardAsPDF(student) {
     setLoading(true, `دروستکردنی کارتی ئەنجام بۆ ${student.id}...`);
 
-    // Create a dedicated wrapper for PDF (to control printing style)
     const wrapper = document.createElement('div');
     wrapper.className = 'card-pdf';
     
-    // Duplicate the rendering logic for PDF consistency
     let totalScore = 0;
     let maxTotal = 0;
+    let overallPass = true;
     
     const rowsHtml = student.results.map(r => {
       totalScore += r.final;
-      maxTotal += 200;
+      maxTotal += r.max;
+      const isPassed = r.final >= (r.max / 2);
+      if (!isPassed) overallPass = false;
+
       return `
         <tr style="border-bottom: 1px solid #eee;">
           <td style="padding: 8px; text-align: right;">${escapeHtml(r.subject)}</td>
-          <td style="padding: 8px; text-align: center;">${escapeHtml(r.grade)} / 100</td>
-          <td style="padding: 8px; text-align: center; font-weight: bold; color: ${r.final < 100 ? '#dc2626' : '#16a34a'};">${escapeHtml(r.final)} / 200</td>
+          <td style="padding: 8px; text-align: center; font-weight: bold; color: ${isPassed ? '#16a34a' : '#dc2626'};">${escapeHtml(r.final)}</td>
+          <td style="padding: 8px; text-align: center;">${escapeHtml(r.max)}</td>
         </tr>
       `;
     }).join('');
     
+    const averagePercentage = (totalScore / maxTotal) * 100;
+    const finalResult = (averagePercentage >= 50 && overallPass) ? 'دەرچوو' : 'دەرنەچوو';
+
     wrapper.innerHTML = `
       <div style="font-family: 'Noto Sans Kurdish', Arial, sans-serif; direction: rtl; padding: 15px; border: 1px solid #1f2937; border-radius: 8px;">
-        <div style="text-align: right; border-bottom: 2px solid #1f2937; padding-bottom: 10px; margin-bottom: 15px;">
-          <h1 style="font-size: 24px; margin: 0; font-weight: 700; color: #1e40af;">کارتی ئەنجامی قوتابی</h1>
+        <div style="text-align: center; border-bottom: 2px solid #1e40af; padding-bottom: 10px; margin-bottom: 15px;">
+          <h1 style="font-size: 26px; margin: 0; font-weight: 700; color: #1e40af;">کارتی ئەنجامی قوتابی</h1>
         </div>
-        <p style="margin: 0 0 5px 0; font-size: 16px;">ناوی قوتابی: <span style="font-weight: 700;">${escapeHtml(student.name)}</span></p>
-        <p style="margin: 0 0 5px 0; font-size: 16px;">پۆل: <span style="font-weight: 700;">${escapeHtml(student.grade)}</span></p>
-        <p style="margin: 0 0 15px 0; font-size: 16px;">ژمارەی قوتابی (ID): <span style="font-weight: 700; color: #dc2626;">${escapeHtml(student.id)}</span></p>
+        <div style="margin-bottom: 15px;">
+          <p style="margin: 0 0 5px 0; font-size: 16px;">ناوی قوتابی: <span style="font-weight: 700;">${escapeHtml(student.name)}</span></p>
+          <p style="margin: 0 0 5px 0; font-size: 16px;">پۆل: <span style="font-weight: 700;">${escapeHtml(student.grade)}</span></p>
+          <p style="margin: 0 0 5px 0; font-size: 16px;">ژمارەی قوتابی (ID): <span style="font-weight: 700; color: #dc2626;">${escapeHtml(student.id)}</span></p>
+        </div>
 
         <div style="border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
           <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead style="background-color: #f3f4f6;">
               <tr style="border-bottom: 2px solid #ccc;">
                 <th style="padding: 8px; text-align: right;">وانە</th>
-                <th style="padding: 8px; text-align: center;">نمرەی کۆتایی (100)</th>
-                <th style="padding: 8px; text-align: center;">کۆی نمرە (200)</th>
+                <th style="padding: 8px; text-align: center;">نمرە</th>
+                <th style="padding: 8px; text-align: center;">کۆی گشتی (Max)</th>
               </tr>
             </thead>
             <tbody>
@@ -277,22 +314,26 @@
             </tbody>
           </table>
         </div>
-        <div style="margin-top: 15px; padding-top: 10px; border-top: 2px solid #1f2937;">
-          <p style="font-size: 16px; font-weight: 700; display: flex; justify-content: space-between;">
+        <div style="margin-top: 20px; padding-top: 10px; border-top: 2px solid #1f2937;">
+          <p style="font-size: 18px; font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 8px;">
             <span>کۆی گشتی نمرەکان:</span>
             <span style="color: ${totalScore/maxTotal < 0.5 ? '#dc2626' : '#16a34a'};">${totalScore} / ${maxTotal}</span>
+          </p>
+          <p style="font-size: 20px; font-weight: 800; display: flex; justify-content: space-between;">
+            <span>ئەنجامی کۆتایی:</span>
+            <span style="color: ${finalResult === 'دەرچوو' ? '#10b981' : '#ef4444'};">${finalResult}</span>
           </p>
         </div>
       </div>
     `;
 
-    // html2pdf options (A6 or similar size for a card)
+    // html2pdf options (A5 size for a larger result card)
     const opt = {
       margin:       [10, 10, 10, 10],
       filename:     `${toLatinDigits(student.id || 'student')}_result_card.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 3, useCORS: true },
-      jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' } // Using A5 for a larger card-like result
+      jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' } 
     };
     
     try {
@@ -308,7 +349,7 @@
   // Search only by ID (exact match)
   function search(query) {
     const q = String(query || '').trim();
-    if (!q) return []; // Return nothing if no query
+    if (!q) return []; 
 
     const qLatin = toLatinDigits(q);
 
@@ -332,11 +373,6 @@
     if (e.key === 'Enter') {
       searchBtn.click();
     }
-  });
-
-  // Export all button is hidden, but keep the function (just in case)
-  exportAllBtn.addEventListener('click', () => {
-    alert("ئەم تایبەتمەندییە لابراوە بۆ گەڕانی تاکەکەسی.");
   });
 
   // Initial setup
