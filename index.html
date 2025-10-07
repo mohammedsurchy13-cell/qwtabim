@@ -84,25 +84,26 @@
     { name: "ئینگلیزی", max: 100 }
   ];
 
-  // 2. DATAY QUTABIYAN (BA NAW U NMRY CHESPRAW)
+  // 2. DATAY QUTABIYAN (BA NMRY NWE CHESPRAW)
+  // Only the first 7 scores are used for each student, matching the 7 subjects.
   const rawStudentsData = [
     { 
       "ID": "123", 
       "Name": "محمد بریندار", 
       "Grade": "12 زانستی",
-      "Scores": [100, 99, 90, 85, 95, 90, 85] 
+      "Scores": [90, 85, 95, 90, 85, 90, 95] 
     },
     { 
       "ID": "124", 
       "Name": "ئازاد کرم", 
       "Grade": "12 زانستی",
-      "Scores": [98, 90, 95, 90, 88, 95, 100] 
+      "Scores": [95, 90, 88, 95, 100, 99, 90] 
     },
     { 
       "ID": "125", 
       "Name": "سلام نزار", 
       "Grade": "12 زانستی",
-      "Scores": [85, 80, 75, 70, 65, 60, 55] 
+      "Scores": [80, 75, 70, 65, 60, 55, 50] // Only 7 scores used
     }
   ];
   
@@ -142,12 +143,8 @@
   const ARABIC_INDIC = "٠١٢٣٤٥٦٧٨٩";
   const LATIN = "0123456789";
   
-  // **FIXED FUNCTION:** Converts any Kurdish/Arabic digits to Latin digits
   function toLatinDigits(str) {
-    // First, remove all spaces just in case
     str = String(str || '').replace(/\s/g, ''); 
-    
-    // Then, convert digits
     return str.replace(/[٠-٩]/g, d => LATIN[ARABIC_INDIC.indexOf(d)]);
   }
 
@@ -185,9 +182,8 @@
       
       return `
         <tr class="border-b hover:bg-gray-50">
-          <td class="px-4 py-2 text-right w-1/3">${escapeHtml(r.subject)}</td>
+          <td class="px-4 py-2 text-right w-2/3">${escapeHtml(r.subject)}</td>
           <td class="px-4 py-2 text-center font-bold ${isPassed ? 'text-green-600' : 'text-red-600'}">${escapeHtml(r.final)}</td>
-          <td class="px-4 py-2 text-center">${escapeHtml(r.max)}</td>
         </tr>
       `;
     }).join('');
@@ -203,9 +199,8 @@
           <table class="min-w-full bg-white text-sm border">
             <thead>
               <tr class="bg-gray-100 border-b">
-                <th class="px-4 py-2 text-right w-1/3">وانە</th>
+                <th class="px-4 py-2 text-right w-2/3">وانە</th>
                 <th class="px-4 py-2 text-center">نمرە</th>
-                <th class="px-4 py-2 text-center">کۆی گشتی (Max)</th>
               </tr>
             </thead>
             <tbody>
@@ -218,6 +213,10 @@
         <p class="text-md font-bold text-slate-800 flex justify-between">
           <span>کۆی گشتی نمرەکان:</span>
           <span class="${totalScore/maxTotal < 0.5 ? 'text-red-600' : 'text-green-600'}">${totalScore} / ${maxTotal}</span>
+        </p>
+        <p class="text-md font-bold text-slate-800 flex justify-between">
+          <span>تێکڕای نمرە (ڕێژەی سەدی):</span>
+          <span class="${averagePercentage < 50 ? 'text-red-600' : 'text-green-600'}">${averagePercentage.toFixed(2)}%</span>
         </p>
         <p class="text-3xl font-extrabold flex justify-between p-3 rounded bg-gray-50 border shadow-inner">
           <span>ئەنجامی کۆتایی:</span>
@@ -252,138 +251,4 @@
         ${resultsHtml}
 
         <div class="mt-6 border-t pt-4 flex gap-2 justify-end">
-          <button class="downloadBtn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition font-medium">دانلودی کارتی ئەنجام (PDF)</button>
-        </div>
-      `;
-      // Attach download handler
-      const btn = card.querySelector('.downloadBtn');
-      btn.addEventListener('click', () => downloadCardAsPDF(s));
-      resultsSection.appendChild(card);
-    });
-  }
-
-  // Convert a single card DOM (or data) to PDF and download
-  async function downloadCardAsPDF(student) {
-    setLoading(true, `دروستکردنی کارتی ئەنجام بۆ ${student.id}...`);
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'card-pdf';
-    
-    let totalScore = 0;
-    let maxTotal = 0;
-    let overallPass = true;
-    
-    const rowsHtml = student.results.map(r => {
-      totalScore += r.final;
-      maxTotal += r.max;
-      const isPassed = r.final >= (r.max / 2);
-      if (!isPassed) overallPass = false;
-
-      return `
-        <tr style="border-bottom: 1px solid #eee;">
-          <td style="padding: 8px; text-align: right;">${escapeHtml(r.subject)}</td>
-          <td style="padding: 8px; text-align: center; font-weight: bold; color: ${isPassed ? '#16a34a' : '#dc2626'};">${escapeHtml(r.final)}</td>
-          <td style="padding: 8px; text-align: center;">${escapeHtml(r.max)}</td>
-        </tr>
-      `;
-    }).join('');
-    
-    const averagePercentage = (totalScore / maxTotal) * 100;
-    const finalResult = (averagePercentage >= 50 && overallPass) ? 'دەرچوو' : 'دەرنەچوو';
-
-    wrapper.innerHTML = `
-      <div style="font-family: 'Noto Sans Kurdish', Arial, sans-serif; direction: rtl; padding: 15px; border: 1px solid #1f2937; border-radius: 8px; width: 190mm; margin: 0 auto;">
-        <div style="text-align: center; border-bottom: 2px solid #1e40af; padding-bottom: 10px; margin-bottom: 15px;">
-          <h1 style="font-size: 26px; margin: 0; font-weight: 700; color: #1e40af;">کارتی ئەنجامی قوتابی</h1>
-        </div>
-        <div style="margin-bottom: 15px;">
-          <p style="margin: 0 0 5px 0; font-size: 16px;">ناوی قوتابی: <span style="font-weight: 700;">${escapeHtml(student.name)}</span></p>
-          <p style="margin: 0 0 5px 0; font-size: 16px;">پۆل: <span style="font-weight: 700;">${escapeHtml(student.grade)}</span></p>
-          <p style="margin: 0 0 5px 0; font-size: 16px;">ژمارەی قوتابی (ID): <span style="font-weight: 700; color: #dc2626;">${escapeHtml(student.id)}</span></p>
-        </div>
-
-        <div style="border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <thead style="background-color: #f3f4f6;">
-              <tr style="border-bottom: 2px solid #ccc;">
-                <th style="padding: 8px; text-align: right;">وانە</th>
-                <th style="padding: 8px; text-align: center;">نمرە</th>
-                <th style="padding: 8px; text-align: center;">کۆی گشتی (Max)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rowsHtml}
-            </tbody>
-          </table>
-        </div>
-        <div style="margin-top: 20px; padding-top: 10px; border-top: 2px solid #1f2937;">
-          <p style="font-size: 18px; font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>کۆی گشتی نمرەکان:</span>
-            <span style="color: ${totalScore/maxTotal < 0.5 ? '#dc2626' : '#16a34a'};">${totalScore} / ${maxTotal}</span>
-          </p>
-          <p style="font-size: 20px; font-weight: 800; display: flex; justify-content: space-between;">
-            <span>ئەنجامی کۆتایی:</span>
-            <span style="color: ${finalResult === 'دەرچوو' ? '#10b981' : '#ef4444'};">${finalResult}</span>
-          </p>
-        </div>
-      </div>
-    `;
-
-    // html2pdf options (Format is A4 to ensure single page output)
-    const opt = {
-      margin:       [10, 10, 10, 10],
-      filename:     `${toLatinDigits(student.id || 'student')}_result_card.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 3, useCORS: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-    };
-    
-    try {
-      await html2pdf().set(opt).from(wrapper).save();
-    } catch (error) {
-      console.error("PDF download failed:", error);
-      alert('هەڵەیەک ڕوویدا لە کاتی داونلۆدی PDF. تکایە دووبارە هەوڵ بدەوە.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Search only by ID (exact match)
-  function search(query) {
-    const q = String(query || '').trim();
-    
-    // ***FIXED: Use toLatinDigits to normalize input query and trim spaces***
-    const qLatin = toLatinDigits(q);
-    
-    if (!qLatin) return []; 
-
-    // Filter for exact ID match
-    const result = students.filter(s => {
-      // Ensure the student ID is also normalized/trimmed before comparison
-      const id = toLatinDigits(String(s.id || '')); 
-      return id === qLatin; // Exact match on normalized ID
-    });
-    return result;
-  }
-
-  // Event handlers
-  searchBtn.addEventListener('click', () => {
-    const q = searchInput.value.trim();
-    const res = search(q);
-    renderResults(res);
-  });
-
-  // Allow Enter key in search to trigger
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      searchBtn.click();
-    }
-  });
-
-  // Initial setup
-  document.getElementById('studentCount').textContent = students.length;
-  renderResults([]); // Start with no results
-
-</script>
-</body>
-</html>
+          <button class="downloadBtn bg
