@@ -66,7 +66,7 @@
       body::before { display: none; }
     }
     
-    /* Logo positioning */
+    /* Logo positioning (Top-Left) */
     .logo-container {
       position: absolute;
       top: 24px; 
@@ -85,6 +85,30 @@
       z-index: 30;
     }
 
+    /* Added CSS for the Creator Link Button */
+    .creator-link-container {
+      position: absolute;
+      top: 120px; /* Adjust vertical position below the logo */
+      left: 24px;
+      z-index: 20;
+    }
+    .creator-link {
+      background-color: #fca311; /* Orange/Yellow Color */
+      color: #1f2937; /* Dark text */
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+      transition: background-color 0.3s, transform 0.1s;
+    }
+    .creator-link:hover {
+      background-color: #fbbf24;
+      transform: scale(1.05);
+    }
+
+
     /* Modern table styling */
     .modern-table th { background-color: #3b82f6; color: white; }
     .modern-table tr:nth-child(even) { background-color: #f3f4f6; }
@@ -93,9 +117,15 @@
 </head>
 <body class="min-h-screen p-6 kurdish-font">
 
-    <div class="logo-container">
+    <a href="#" class="logo-container" aria-label="گەڕانەوە بۆ ماڵەوە">
     <img src="Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg" alt="Logo" class="h-20 w-20 rounded-full shadow-xl object-cover" /> 
     <span class="text-3xl font-extrabold text-slate-800 dark:text-gray-100 tracking-wider transition">Qwtabim</span>
+  </a>
+
+    <div class="creator-link-container">
+    <a href="creator.html" class="creator-link">
+      زانیاری دروستکەر
+    </a>
   </div>
 
     <div class="theme-toggle-container">
@@ -195,7 +225,7 @@
     { name: "ئینگلیزی", max: 100 }
   ];
 
-  // 2. DATAY QUTABIYAN (BA NAW U NMRY CHESPRAW)
+  // 2. DATAY QUTABIYAN (4 QUTABI CHESPRAW)
   const rawStudentsData = [
     { 
       "ID": "123", 
