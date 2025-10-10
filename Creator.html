@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>زانیاری دروستکەر — محمد بریندار</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kurdish:wght@100..900&display=swap" rel="stylesheet">
+
+
+  <style>
+    /* NRT-REG FONT INTEGRATION (Local file - relies on correct placement) */
+    @font-face {
+      font-family: 'NRT Reg';
+      src: url('NRT-Reg.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap; 
+    }
+
+    /* Define font family for the whole app: Prioritize Noto Sans Kurdish for stability */
+    .kurdish-font, [dir="rtl"] { font-family: "NRT Reg", "Noto Sans Kurdish", Arial, sans-serif; }
+    
+    /* Background styling to match the main page */
+    body { 
+      position: relative; 
+      background: #f3f4f6;
+      background-image: url('Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      transition: background-color 0.3s;
+    } 
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(243, 244, 246, 0.6);
+      backdrop-filter: blur(8px); 
+      z-index: -1;
+      transition: background-color 0.3s;
+    }
+
+    /* DARK MODE STYLING */
+    .dark body { background: #1f2937; } 
+    .dark body::before { background-color: rgba(31, 41, 55, 0.8); } 
+    
+    /* Custom logo positioning for navigation */
+    .logo-container {
+      position: absolute;
+      top: 24px; 
+      left: 24px; 
+      z-index: 20; 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+    }
+
+    /* Back Button Styling (Top-Right) */
+    .back-button {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 30;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-6 kurdish-font">
+
+    <a href="index.html" class="logo-container" aria-label="گەڕانەوە بۆ ماڵەوە">
+    <img src="Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg" alt="Logo" class="h-16 w-16 rounded-full shadow-xl object-cover" /> 
+    <span class="text-2xl font-extrabold text-slate-800 dark:text-gray-100 tracking-wider transition">Qwtabim</span>
+  </a>
+
+    <a href="index.html" class="back-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition transform hover:scale-105">
+    گەڕانەوە بۆ لاپەڕەی سەرەکی
+  </a>
+
+  <main class="max-w-4xl mx-auto pt-24 pb-12 flex justify-center items-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-10 md:p-12 text-center transition w-full">
+
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-gray-50 mb-6">زانیاری دروستکەری وێبسایت</h1>
+      <div class="border-t border-slate-300 dark:border-gray-700 pt-6">
+
+        <h2 class="text-3xl font-bold text-blue-600 mb-4">محمد بریندار</h2>
+
+        <p class="text-xl text-slate-700 dark:text-gray-300 mb-6 leading-relaxed">
+          ئەم وێبسایتە لەلایەن منەوە، **محمد بریندار**، دروست کراوە. 
+          پڕۆژەکە بە هاوکاری **زیرەکی دەستکرد (AI)** و بە بەکارهێنانی مۆدێلی **Gemini** بۆ مەبەستی فێربوون، نیشاندانی تواناکان، و دروستکردنی شتێکی ناوازە و بەسوود دروست کراوە.
+        </p>
+
+        <p class="text-xl font-extrabold text-gray-800 dark:text-gray-100 mb-4">هاوکاری و پەیوەندی:</p>
+
+                <a href="https://web.facebook.com/mohammad.brindar.9/?_rdc=1&_rdr#" target="_blank" 
+          class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition transform hover:scale-105 shadow-md">
+                    <svg class="w-6 h-6 ml-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24h11.493v-9.294H9.691V11.23h3.127V8.75c0-3.127 1.893-4.814 4.656-4.814 1.325 0 2.463.099 2.793.143v3.24l-1.918.001c-1.503 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.63H16.14V24h6.535c.732 0 1.325-.593 1.325-1.325V1.325C24 .593 23.407 0 22.675 0z"/>
+          </svg>
+          فەیسبووک (Mohammad Brindar)
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Theme initialization for the creator page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if dark theme was active on the main page
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark');
+      }
+    });
+  </script>
+</body>
+</html>
