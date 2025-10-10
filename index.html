@@ -22,7 +22,7 @@
       src: url('NRT-Reg.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
-      font-display: swap; 
+      font-display: swap; /* Ensures text remains visible during font loading */
     }
 
     /* Define font family for the whole app, prioritizing NRT Reg */
@@ -77,42 +77,15 @@
       gap: 12px; 
     }
 
-    /* Theme toggle position for RTL: Top-Right */
+    /* Theme toggle position for RTL: Top-Right (Container for both icons) */
     .theme-toggle-container {
       position: absolute;
       top: 24px;
       right: 24px;
       z-index: 30;
+      display: flex;
+      gap: 12px; /* Space between the two buttons */
     }
-    
-    /* Added CSS for the Creator Link Button */
-    .creator-link-container {
-      position: absolute;
-      top: 120px; /* Adjust vertical position below the logo */
-      left: 24px;
-      z-index: 20;
-    }
-    .creator-link {
-      background-color: #fca311; /* Orange/Yellow Color */
-      color: #1f2937; /* Dark text */
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-      transition: background-color 0.3s, transform 0.1s;
-    }
-    .creator-link:hover {
-      background-color: #fbbf24;
-      transform: scale(1.05);
-    }
-
-
-    /* Modern table styling */
-    .modern-table th { background-color: #3b82f6; color: white; }
-    .modern-table tr:nth-child(even) { background-color: #f3f4f6; }
-    .dark .modern-table tr:nth-child(even) { background-color: #374151; }
   </style>
 </head>
 <body class="min-h-screen p-6 kurdish-font">
@@ -122,14 +95,15 @@
     <span class="text-3xl font-extrabold text-slate-800 dark:text-gray-100 tracking-wider transition">Qwtabim</span>
   </a>
 
-    <div class="creator-link-container">
-    <a href="creator.html" class="creator-link">
-      زانیاری دروستکەر
-    </a>
-  </div>
-
     <div class="theme-toggle-container">
-    <button id="themeToggle" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110">
+    
+        <a href="creator.html" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110" aria-label="زانیاری دروستکەر">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </a>
+
+        <button id="themeToggle" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110">
       <svg id="sunIcon" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
       </svg>
@@ -472,7 +446,7 @@
           </p>
           <div style="font-size: 24px; font-weight: 800; text-align: center; padding: 12px; background-color: #eff6ff; border: 2px solid #93c5fd; border-radius: 8px;">
             <span style="color: #1f2937;">ئەنجامی کۆتایی:</span>
-            <span style="color: ${finalResult === 'دەرچوو' ? '#10b981' : '#ef4444'}; margin-right: 10px;">${finalResult}</span>
+            <span style="color: ${finalResult === 'derezhoo' ? '#10b981' : '#ef4444'}; margin-right: 10px;">${finalResult}</span>
           </div>
         </div>
       </div>
