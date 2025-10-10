@@ -77,41 +77,45 @@
       gap: 12px; 
     }
 
-    /* Theme toggle position for RTL: Top-Right (Container for both icons) */
-    .theme-toggle-container {
+    /* Theme toggle position for RTL: Combined icons/buttons with logo */
+    .top-left-controls {
       position: absolute;
-      top: 24px;
-      right: 24px;
+      top: 24px; 
+      left: 24px; 
       z-index: 30;
       display: flex;
-      gap: 12px; /* Space between the two buttons */
+      align-items: center;
+      gap: 12px;
     }
   </style>
 </head>
 <body class="min-h-screen p-6 kurdish-font">
 
-    <a href="#" class="logo-container" aria-label="گەڕانەوە بۆ ماڵەوە">
-    <img src="Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg" alt="Logo" class="h-20 w-20 rounded-full shadow-xl object-cover" /> 
-    <span class="text-3xl font-extrabold text-slate-800 dark:text-gray-100 tracking-wider transition">Qwtabim</span>
-  </a>
-
-    <div class="theme-toggle-container">
-    
-        <a href="creator.html" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110" aria-label="زانیاری دروستکەر">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+    <div class="top-left-controls">
+        <a href="#" class="flex items-center gap-3" aria-label="گەڕانەوە بۆ ماڵەوە">
+      <img src="Gemini_Generated_Image_b9w8g4b9w8g4b9w8.jpg" alt="Logo" class="h-20 w-20 rounded-full shadow-xl object-cover" /> 
+      <span class="text-3xl font-extrabold text-slate-800 dark:text-gray-100 tracking-wider transition">Qwtabim</span>
     </a>
 
-        <button id="themeToggle" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110">
-      <svg id="sunIcon" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-      <svg id="moonIcon" class="h-6 w-6 text-gray-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
-    </button>
+        <div class="flex flex-col gap-2">
+      
+            <a href="creator.html" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110 flex items-center justify-center" aria-label="زانیاری دروستکەر">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </a>
+
+            <button id="themeToggle" class="bg-white dark:bg-gray-700 p-2 rounded-full shadow-lg transition transform hover:scale-110 flex items-center justify-center">
+        <svg id="sunIcon" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg id="moonIcon" class="h-6 w-6 text-gray-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      </button>
+    </div>
   </div>
+
 
     <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white p-6 rounded-lg shadow-xl flex items-center gap-4 kurdish-font">
@@ -446,7 +450,7 @@
           </p>
           <div style="font-size: 24px; font-weight: 800; text-align: center; padding: 12px; background-color: #eff6ff; border: 2px solid #93c5fd; border-radius: 8px;">
             <span style="color: #1f2937;">ئەنجامی کۆتایی:</span>
-            <span style="color: ${finalResult === 'derezhoo' ? '#10b981' : '#ef4444'}; margin-right: 10px;">${finalResult}</span>
+            <span style="color: ${finalResult === 'دەرچوو' ? '#10b981' : '#ef4444'}; margin-right: 10px;">${finalResult}</span>
           </div>
         </div>
       </div>
